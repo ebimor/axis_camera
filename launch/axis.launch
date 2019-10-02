@@ -1,6 +1,7 @@
+<?xml version="1.0"?>
 <launch>
   <arg name="camera_name" default="axis" />
-  <arg name="hostname" default="192.168.1.13" />
+  <arg name="hostname" default="192.168.131.12" />
   <arg name="enable_theora" default="0" />
   <arg name="enable_ptz" default="1" />
   <arg name="enable_ptz_teleop" default="1" />
@@ -18,12 +19,17 @@
       <remap from="out" to="image_raw_out" />
     </node>
 
-    <node pkg="axis_camera" type="teleop.py" name="teleop" if="$(arg enable_ptz_teleop)">
+    <!--node pkg="axis_camera" type="teleop.py" name="teleop" if="$(arg enable_ptz_teleop)">
       <param name="enable_button" value="1" />
       <param name="scale_pan_deg" value="25" />
       <param name="scale_tilt_deg" value="25" />
       <remap from="joy" to="/remote_camera_joy_teleop/joy" />
+    </node-->
+
+    <node pkg="axis_camera" type="teleop_speed_control.py" name="teleop" if="$(arg enable_ptz_teleop)">
+      <remap from="joy" to="/remote_camera_joy_teleop/joy" />
     </node>
+
   </group>
 
   <!-- To control the PTZ, issue commands like so:

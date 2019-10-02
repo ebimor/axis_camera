@@ -22,7 +22,7 @@ class Teleop:
         self.mirror = False
         self.mirror_already_actioned = False # to stop mirror flip-flopping
         self.sensitivities = [120, -60, 40, 0, 0, 30]
-        self.deadband = [0.2, 0.2, 0.2, 0.2, 0.4, 0.4]
+        self.deadband = [0.2, 0.2, 0.1, 0.5, 0.5, 0.5, 0.5, 0.5]
        
     def spin(self):
         self.pub.publish(self.msg)
@@ -37,23 +37,23 @@ class Teleop:
         '''Creates and publishes message to command the camera.  Spacenav axes
         are: [fwd, left, up, tilt_right, tilt_forward, twist_anticlockwise'''
         self.applyThresholds()
-        self.msg.pan = self.axes_thresholded[1] * self.sensitivities[1]
-        self.msg.tilt = self.axes_thresholded[2] * self.sensitivities[2]
-        self.msg.zoom = self.axes_thresholded[0] * self.sensitivities[0]
-        if self.joy.buttons[0]==1:
-            self.msg.autofocus = True
-        else:
-            self.msg.focus = self.axes_thresholded[5] * self.sensitivities[5]
-            if (abs(self.msg.focus)>0.00001):
+        self.msg.pan = self.axes_thresholded[0] * self.sensitivities[0]
+        self.msg.tilt = self.axes_thresholded[1] * self.sensitivities[1]
+        self.msg.zoom = self.axes_thresholded[2] * self.sensitivities[2]
+        #if self.joy.buttons[1]==1:
+        self.msg.autofocus = True
+        #else:
+            #self.msg.focus = self.axes_thresholded[5] * self.sensitivities[5]
+        #    if (abs(self.msg.focus)>0.00001):
                 # Only turn autofocus off if msg.focus!=0
-                self.msg.autofocus = False
+        #        self.msg.autofocus = False
         self.pub.publish(self.msg)
 
     def applyThresholds(self):
         '''apply deadband to joystick output'''
         n = len(self.joy.axes)
         self.axes_thresholded = n * [0.0]
-        for i in range(n):
+        for i in range(3):
             if (abs(self.joy.axes[i])>self.deadband[i]):
                 self.axes_thresholded[i] = self.joy.axes[i]
                 
